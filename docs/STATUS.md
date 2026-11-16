@@ -10,6 +10,30 @@ instruments/song. Generated build/work directories, dependency downloads and
 machine-local settings are excluded in `.gitignore`. No further tests are run
 for this checkpoint; the numeric-entry correction awaits user validation.
 
+## GitHub workflows — manual only
+
+On 16 November the user requested disabling automatic Linux builds. Removed
+the `push` and `pull_request` triggers from `.github/workflows/build.yml`,
+leaving only `workflow_dispatch`. Both Linux build and Manual release now run
+only when explicitly started. Build settings, packaging and version 0.5.1 are
+unchanged. README and the build/CI guides reflect the new trigger policy.
+
+**Checked by the agent:** parsed both workflow YAML files and verified their
+only trigger is `workflow_dispatch`; `git diff --check` passes. No plugin build,
+runtime tests or workflow dispatch is needed for this trigger-only change.
+
+Exact working commands:
+
+```sh
+git diff --check
+git add .github/workflows/build.yml README.md docs/BUILD.md docs/CI.md docs/STATUS.md
+git commit -m "Run Linux build workflow only on manual dispatch"
+git push origin master
+```
+
+Next: use **Actions → Linux build → Run workflow** when packages are wanted;
+use **Manual release** separately when a versioned release is wanted.
+
 ## Version 0.5.1 source checkpoint
 
 On 16 November the user requested committing/pushing the pending changes and
@@ -43,8 +67,8 @@ git push origin master
 - On 16 November the user explicitly requests a code fix for persistent Noise
   silence after waveform switching; automatic recovery is implemented below.
 - User requested Stage 5 implementation on 16 November; preview release below.
-- User requested GitHub Actions Linux builds and a release workflow that they
-  will run manually. Keep automated tests disabled in these workflows.
+- User requested GitHub Actions Linux builds and a release workflow. Both must
+  now run manually. Keep automated tests disabled in these workflows.
 - On 16 November the user reports Stage 5 works fine, and identifies white text
   during numeric entry. The user will test this UI correction manually and
   explicitly requests no agent tests or new tests.
@@ -170,12 +194,13 @@ work/renoise-host/noise-latch-probe
 At this diagnosis checkpoint, recovery required Noise alone plus Panic/reset.
 The subsequent code fix removes that requirement after loading the new binary.
 
-## GitHub Actions setup
+## GitHub Actions setup — historical automatic triggers
 
 Added a Linux build workflow for pushes to `master`, pull requests targeting
 `master` and manual runs. It uses Ubuntu 24.04, `BUILD_TESTING=OFF`, the pinned
 source archives, two parallel compile jobs and seven-day downloadable binary/
-source artifacts. The source package now includes `.github/`.
+source artifacts. The source package now includes `.github/`. The user later
+requested manual-only builds; the trigger policy above supersedes this setup.
 
 The separate **Manual release** workflow has only `workflow_dispatch`. It
 defaults to a draft preview release and is left for the user to invoke.

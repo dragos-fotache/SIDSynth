@@ -1,11 +1,8 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 name: Linux build
 
+# Builds run only when explicitly requested through Run workflow.
 on:
-  push:
-    branches: [master]
-  pull_request:
-    branches: [master]
   workflow_dispatch:
 
 permissions:

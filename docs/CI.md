@@ -1,15 +1,16 @@
 # GitHub Actions builds and manual releases
 
-The repository has two workflows. Neither compiles or runs the test suite,
-pluginval, sanitizers, audio playback or Renoise automation. Builds explicitly
-use `BUILD_TESTING=OFF`, as requested by the user.
+The repository has two workflows, both started manually. Neither compiles or
+runs the test suite, pluginval, sanitizers, audio playback or Renoise automation.
+Builds explicitly use `BUILD_TESTING=OFF`, as requested by the user.
 
 ## Linux build
 
 [Linux build](https://github.com/dragos-fotache/SIDSynth/actions/workflows/build.yml)
-runs on pushes to `master`, pull requests targeting `master`, and the manual
-**Run workflow** button. It uses a standard Ubuntu 24.04 x86_64 runner, builds
-the Release VST3 and packages:
+has only `workflow_dispatch`. Start it through **Actions → Linux build →
+Run workflow** and choose the source branch. Pushes and pull requests do not
+start it. It uses a standard Ubuntu 24.04 x86_64 runner, builds the Release VST3
+and packages:
 
 - `SIDSynth-<version>-linux-x86_64.tar.gz`: plugin, licenses, docs and examples.
 - `SIDSynth-<version>-source.tar.gz`: corresponding project sources, workflows,
@@ -22,7 +23,7 @@ and artifact upload. This is build/packaging evidence only.
 
 Open a completed workflow run and download its artifact under **Artifacts**.
 The artifact name includes the source commit. Retention is **7 days**; pinned
-dependency downloads are cached separately. Superseded automatic builds on the
+dependency downloads are cached separately. Superseded manual builds on the
 same branch are cancelled to avoid redundant work. No release or tag is created.
 
 Both workflows use `.github/actions/build-linux/action.yml` so their build and

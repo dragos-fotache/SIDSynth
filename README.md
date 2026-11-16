@@ -17,8 +17,8 @@ commands are in [docs/BUILD.md](docs/BUILD.md). The optional EXT IN bus works
 offline; the tested Renoise workflow exposes no native instrument input route.
 Renoise Demo cannot render offline. External Vital issues remain out of scope.
 
-[GitHub Actions](docs/CI.md) builds Linux packages on pushes and pull requests.
-Releases use a separate workflow that you run manually.
+[GitHub Actions](docs/CI.md) provides separate Linux package and release
+workflows. Both run only when started manually.
 
 ## Product decisions
 

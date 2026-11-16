@@ -1,6 +1,6 @@
 # Linux build, validation and release
 
-For the automatic GitHub Linux builds and the manually invoked release workflow,
+For the manually invoked GitHub Linux build and release workflows,
 see [CI.md](CI.md). These workflows compile/package only, with tests disabled.
 
 ## Build
