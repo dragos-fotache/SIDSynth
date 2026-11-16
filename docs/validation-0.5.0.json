@@ -1,0 +1,152 @@
+{
+  "date": "2026-11-16",
+  "plugin_version": "0.5.0",
+  "module_sha256": "7795624b57b326eeb5a404153e346dcfcd96bcac12f7f22039351edb324f6794",
+  "schema": 3,
+  "parameter_count": 67,
+  "automated_by": "agent",
+  "release_ctest": {
+    "passed": true,
+    "seconds": 10.07
+  },
+  "asan_ubsan_lsan": {
+    "passed": true,
+    "seconds": 96.16,
+    "suppressions": false
+  },
+  "pluginval": {
+    "version": "1.0.4",
+    "strictness": 10,
+    "seed": 20949,
+    "passed": true,
+    "sample_rates": [
+      44100,
+      48000,
+      96000
+    ],
+    "block_sizes": [
+      1,
+      64,
+      257,
+      1024
+    ],
+    "separate_steinberg_validator": "not installed; optional subtest skipped"
+  },
+  "callback_guards": {
+    "cpp_allocations": 0,
+    "wrapped_c_allocations": 0,
+    "wrapped_frees": 0,
+    "wrapped_pthread_mutex_locks": 0,
+    "scope": "Linked calls; not a whole-system profiler"
+  },
+  "cpu_measurement": {
+    "processor": "AMD Ryzen 5 3600X",
+    "build": "Release; no sanitizer instrumentation",
+    "rates": [
+      44100,
+      48000,
+      96000
+    ],
+    "blocks": [
+      64,
+      257,
+      1024
+    ],
+    "rows": 45,
+    "audio_seconds_per_row": 3,
+    "summary": {
+      "6581": {
+        "minimum_cpu_percent_one_core": 6.29309,
+        "maximum_cpu_percent_one_core": 6.72971,
+        "maximum_measured_callback_deadline_fraction": 0.14205075
+      },
+      "8580": {
+        "minimum_cpu_percent_one_core": 4.94501,
+        "maximum_cpu_percent_one_core": 5.24584,
+        "maximum_measured_callback_deadline_fraction": 0.12179925000000001
+      },
+      "ext-in": {
+        "minimum_cpu_percent_one_core": 5.02872,
+        "maximum_cpu_percent_one_core": 5.35036,
+        "maximum_measured_callback_deadline_fraction": 0.140247
+      },
+      "fresh-idle": {
+        "minimum_cpu_percent_one_core": 0.00420649,
+        "maximum_cpu_percent_one_core": 0.1566,
+        "maximum_measured_callback_deadline_fraction": 0.00263775
+      },
+      "released": {
+        "minimum_cpu_percent_one_core": 4.93505,
+        "maximum_cpu_percent_one_core": 5.3126,
+        "maximum_measured_callback_deadline_fraction": 0.17999025000000002
+      }
+    }
+  },
+  "renoise": {
+    "version": "3.5.4 Demo",
+    "checked_pid": 81061,
+    "sample_rate": 48000,
+    "block_size": 1024,
+    "aliases_independent_release": true,
+    "two_instances_independent": true,
+    "editor_cycles_per_instance": 5,
+    "two_instance_recall": true,
+    "stop_start_cycles": 3,
+    "automation_open_closed_open_rms": [
+      0.006508876107371494,
+      0.0011972969792370925,
+      0.006508007718872665
+    ],
+    "native_demo_patches": [
+      "sidsynth-three-parts",
+      "sidsynth-layered-brass",
+      "sidsynth-ring-bell"
+    ],
+    "offline_render": {
+      "reason": "Renoise Demo disables offline rendering; use normal playback checks.",
+      "state": "unavailable"
+    },
+    "speaker_links_restored": true,
+    "demo_aliases_after_native_reload": true
+  },
+  "normal_shutdowns": [
+    {
+      "pid": 65130,
+      "normal_close": true,
+      "seconds": 3.2075969869983965,
+      "saved": "sidsynth-stage5-shutdown-baseline"
+    },
+    {
+      "pid": 76089,
+      "normal_close": true,
+      "seconds": 3.0032308100016962,
+      "saved": "sidsynth-stage5-before-final"
+    },
+    {
+      "pid": 78211,
+      "normal_close": true,
+      "seconds": 3.0030618669989053,
+      "saved": "sidsynth-stage5-final-checkpoint"
+    },
+    {
+      "pid": 80042,
+      "normal_close": true,
+      "seconds": 3.0029222809971543,
+      "saved": "sidsynth-stage5-release-checkpoint"
+    }
+  ],
+  "subjective_demo_listening": "pending user",
+  "source_archive_rebuild": {
+    "passed": true,
+    "release_ctest_seconds": 9.92,
+    "network_downloads": false,
+    "cpp_tests_cmake_match_final_source": true
+  },
+  "packaging": {
+    "binary_contents_verified": true,
+    "installed_module_matches_archive": true,
+    "final_code_and_tools_match_source_archive": true,
+    "dependency_archive_hashes_verified": true,
+    "deterministic_repeat_checksums": true
+  }
+}

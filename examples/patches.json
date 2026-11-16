@@ -1,0 +1,45 @@
+{
+  "format": "Renoise normalized plugin parameter recipes",
+  "schemaVersion": 3,
+  "patches": [
+    {
+      "name": "Three Parts",
+      "file": "sidsynth-three-parts",
+      "description": "Saw bass, pulse lead and triangle counterline on channels 1/2/3, sharing one low-pass filter.",
+      "parameters": {
+        "Output": 0.7, "Play mode": 0,
+        "Filter voice 1": 1, "Filter voice 2": 1,
+        "Filter low pass": 1, "Filter cutoff": 0.58622374, "Filter resonance": 0.26666667,
+        "Voice 1 decay": 0.4, "Voice 1 sustain": 0.6, "Voice 1 release": 0.26666667,
+        "Voice 2 saw": 0, "Voice 2 pulse": 1, "Voice 2 pulse width": 0.31257631,
+        "Voice 2 decay": 0.4, "Voice 2 sustain": 0.6, "Voice 2 release": 0.26666667,
+        "Voice 3 saw": 0, "Voice 3 triangle": 1,
+        "Voice 3 decay": 0.4, "Voice 3 sustain": 0.6, "Voice 3 release": 0.26666667
+      }
+    },
+    {
+      "name": "Layered Brass",
+      "file": "sidsynth-layered-brass",
+      "description": "Three slightly detuned saws on layered channel 1 with a shared resonant low-pass filter.",
+      "parameters": {
+        "Output": 0.7, "Play mode": 1,
+        "Voice 2 tuning": 0.49963542, "Voice 3 tuning": 0.50036458,
+        "Voice 1 attack": 0.13333333, "Voice 2 attack": 0.13333333, "Voice 3 attack": 0.13333333,
+        "Filter voice 1": 1, "Filter voice 2": 1, "Filter voice 3": 1,
+        "Filter low pass": 1, "Filter cutoff": 0.43966781, "Filter resonance": 0.4
+      }
+    },
+    {
+      "name": "Ring Bell",
+      "file": "sidsynth-ring-bell",
+      "description": "Voice 1 triangle ring-modulated by a silent fifth above on voice 3; one layered MIDI input.",
+      "parameters": {
+        "Output": 0.7, "Play mode": 1,
+        "Voice 1 saw": 0, "Voice 1 triangle": 1, "Voice 1 ring": 1,
+        "Voice 1 decay": 0.66666667, "Voice 1 sustain": 0, "Voice 1 release": 0.46666667,
+        "Voice 2 saw": 0, "Voice 3 saw": 0,
+        "Voice 3 tuning": 0.53645833, "Voice 3 direct output": 0
+      }
+    }
+  ]
+}

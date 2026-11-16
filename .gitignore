@@ -1,0 +1,17 @@
+# Generated builds, release packages and scratch host evidence
+/build/
+/build-*/
+/cmake-build-*/
+/work/
+/dependency-downloads/
+
+# Machine-local configuration and generated editor tooling
+/.codex/
+/.agents/
+/.aws/
+/CMakeUserPresets.json
+/compile_commands.json
+
+# Python bytecode
+__pycache__/
+*.py[cod]
