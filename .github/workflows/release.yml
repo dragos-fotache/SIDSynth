@@ -1,0 +1,106 @@
+# SPDX-License-Identifier: AGPL-3.0-only
+name: Manual release
+
+# Intentionally manual only: pushes, tags, successful builds and schedules
+# cannot invoke this workflow.
+on:
+  workflow_dispatch:
+    inputs:
+      draft:
+        description: Create a draft for review before publishing
+        type: boolean
+        default: true
+      prerelease:
+        description: Mark this as a preview release
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sidsynth-manual-release
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build selected commit
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    outputs:
+      version: ${{ steps.build.outputs.version }}
+    steps:
+      - name: Check out selected source
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
+
+      - name: Build and package
+        id: build
+        uses: ./.github/actions/build-linux
+
+      - name: Retain release packages
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: manual-release-${{ github.run_id }}
+          path: |
+            build-release/SIDSynth-*.tar.gz
+            build-release/SHA256SUMS
+          if-no-files-found: error
+          retention-days: 7
+          compression-level: 0
+
+  release:
+    name: Create requested release
+    needs: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - name: Download this run's packages
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: manual-release-${{ github.run_id }}
+          path: release-packages
+
+      - name: Create release and attach packages
+        shell: bash
+        working-directory: release-packages
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ needs.build.outputs.version }}
+          DRAFT: ${{ inputs.draft }}
+          PRERELEASE: ${{ inputs.prerelease }}
+        run: |
+          tag="v$VERSION"
+          # Never attach a build to a tag for a different source commit.
+          if gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$tag" >"$RUNNER_TEMP/tag-ref.json" 2>"$RUNNER_TEMP/tag-error"; then
+            tag_sha="$(gh api "repos/$GITHUB_REPOSITORY/commits/$tag" --jq .sha)"
+            if [[ "$tag_sha" != "$GITHUB_SHA" ]]; then
+              echo "::error::Tag $tag already points to another commit. Bump the project version before releasing."
+              exit 1
+            fi
+          elif ! grep -q 'HTTP 404' "$RUNNER_TEMP/tag-error"; then
+            cat "$RUNNER_TEMP/tag-error" >&2
+            exit 1
+          fi
+
+          cat > "$RUNNER_TEMP/release-notes.md" <<EOF
+          Linux x86_64 VST3 preview, built on Ubuntu 24.04 from commit $GITHUB_SHA.
+
+          Assets include the plugin, demonstration patches, licenses, complete
+          corresponding source with pinned dependency archives, and SHA256SUMS.
+
+          This workflow performs compilation and packaging only. Automated
+          runtime tests and Renoise host checks are not run by this workflow.
+          See the included documentation for historical validation and known limits.
+          EOF
+
+          args=(--repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA"
+            --title "SIDSynth $VERSION" --notes-file "$RUNNER_TEMP/release-notes.md")
+          if [[ "$DRAFT" == true ]]; then args+=(--draft); fi
+          if [[ "$PRERELEASE" == true ]]; then args+=(--prerelease); fi
+          gh release create "$tag" \
+            "SIDSynth-$VERSION-linux-x86_64.tar.gz" \
+            "SIDSynth-$VERSION-source.tar.gz" SHA256SUMS "${args[@]}"

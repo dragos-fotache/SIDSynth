@@ -16,6 +16,8 @@ for this checkpoint; the numeric-entry correction awaits user validation.
 - Selected interface: Rack. Its design files are unchanged by Stages 1 and 2.
 - Implement in stages with durable project context.
 - User requested Stage 5 implementation on 16 November; preview release below.
+- User requested GitHub Actions Linux builds and a release workflow that they
+  will run manually. Keep automated tests disabled in these workflows.
 - On 16 November the user reports Stage 5 works fine, and identifies white text
   during numeric entry. The user will test this UI correction manually and
   explicitly requests no agent tests or new tests.
@@ -32,6 +34,24 @@ for this checkpoint; the numeric-entry correction awaits user validation.
   after playing Vital and switching back to SIDSynth in the Plugin tab.
 - User directs us to leave Renoise/Vital bugs alone and move on if the fault
   is external. The isolated tests below reproduce the crash with Vital alone.
+
+## GitHub Actions setup
+
+Added a Linux build workflow for pushes to `master`, pull requests targeting
+`master` and manual runs. It uses Ubuntu 24.04, `BUILD_TESTING=OFF`, the pinned
+source archives, two parallel compile jobs and seven-day downloadable binary/
+source artifacts. The source package now includes `.github/`.
+
+The separate **Manual release** workflow has only `workflow_dispatch`. It
+defaults to a draft preview release and is left for the user to invoke.
+Only its final release job has repository write permission. No test suite,
+validator, sanitizer, host check or release workflow is run for this setup.
+See `docs/CI.md` for the exact triggers, Action commit pins and user procedure.
+The first automatic cloud build is pending publication of this setup.
+
+GitHub is installed through the app connector but its MCP tools are not exposed
+to this active chat. Plugin Management confirmed that connection; the already
+authenticated GitHub CLI is used for repository/workflow operations.
 
 ## Numeric-entry colour correction — manual validation pending
 

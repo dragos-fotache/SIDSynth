@@ -61,7 +61,7 @@ def package(build, dependencies, output):
         subprocess.run(['cmake', '--install', str(build), '--prefix', str(binary), '--component', 'Plugin'], check=True)
         for name in ('README.md', 'LICENSE', 'AGENTS.md', 'CMakeLists.txt', '.gitignore'):
             shutil.copy2(PROJECT / name, source)
-        for name in ('src', 'tests', 'cmake', 'docs', 'tools', 'design', 'third_party', 'examples'):
+        for name in ('src', 'tests', 'cmake', 'docs', 'tools', 'design', 'third_party', 'examples', '.github'):
             shutil.copytree(PROJECT / name, source / name, ignore=shutil.ignore_patterns('__pycache__', '*.pyc'))
         shutil.copytree(dependencies, source / 'dependency-downloads',
                         ignore=lambda path, names: [n for n in names if n not in ('juce-9.0.5.tar.gz', 'libresidfp-1.3.0.tar.gz')])

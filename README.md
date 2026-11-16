@@ -14,6 +14,9 @@ commands are in [docs/BUILD.md](docs/BUILD.md). The optional EXT IN bus works
 offline; the tested Renoise workflow exposes no native instrument input route.
 Renoise Demo cannot render offline. External Vital issues remain out of scope.
 
+[GitHub Actions](docs/CI.md) builds Linux packages on pushes and pull requests.
+Releases use a separate workflow that you run manually.
+
 ## Product decisions
 
 - Linux only. VST3 is the initial plugin format.
@@ -48,6 +51,7 @@ over the plugin window.
 - [Implementation plan](docs/PLAN.md): staged scope and acceptance criteria.
 - [Current status](docs/STATUS.md): completed work, next task and handoff prompt.
 - [Build and audition](docs/BUILD.md): exact commands and local toolchain.
+- [Cloud builds and releases](docs/CI.md): downloadable artifacts and manual releases.
 - [Renoise MCP](docs/RENOISE_MCP.md): local connection, fixture and recorded host checks.
 - [Rack editor guide](docs/RACK.md): controls, audition, resizing and recall.
 - [Parameter/state contract](docs/STATE.md): stable IDs, schema 3 and schema 1/2 migration.

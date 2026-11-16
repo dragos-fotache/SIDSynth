@@ -1,5 +1,8 @@
 # Linux build, validation and release
 
+For the automatic GitHub Linux builds and the manually invoked release workflow,
+see [CI.md](CI.md). These workflows compile/package only, with tests disabled.
+
 ## Build
 
 Requires CMake 3.24+, Ninja, a C++17 compiler, pkg-config and Linux development
