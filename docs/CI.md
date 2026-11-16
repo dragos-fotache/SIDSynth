@@ -16,6 +16,10 @@ the Release VST3 and packages:
   and the two original pinned dependency source archives.
 - `SHA256SUMS`.
 
+The first [cloud build](https://github.com/dragos-fotache/SIDSynth/actions/runs/43890905800)
+passed on 16 November 2026 for commit `626a7b9`, including both package archives
+and artifact upload. This is build/packaging evidence only.
+
 Open a completed workflow run and download its artifact under **Artifacts**.
 The artifact name includes the source commit. Retention is **7 days**; pinned
 dependency downloads are cached separately. Superseded automatic builds on the

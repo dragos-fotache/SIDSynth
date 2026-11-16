@@ -47,7 +47,13 @@ defaults to a draft preview release and is left for the user to invoke.
 Only its final release job has repository write permission. No test suite,
 validator, sanitizer, host check or release workflow is run for this setup.
 See `docs/CI.md` for the exact triggers, Action commit pins and user procedure.
-The first automatic cloud build is pending publication of this setup.
+The setup was committed/pushed as `626a7b9`. Its first automatic build,
+[43890905800](https://github.com/dragos-fotache/SIDSynth/actions/runs/43890905800),
+**passed on 16 November**, including binary/source packaging and artifact upload.
+The artifact is about **32.2 MB**, with seven-day retention. Build log:
+`work/github-build-43890905800-full.log`. This establishes build/packaging only;
+no automated tests or host checks were added or run. GitHub reports zero runs
+of **Manual release** and zero releases after setup. The user will dispatch it.
 
 GitHub is installed through the app connector but its MCP tools are not exposed
 to this active chat. Plugin Management confirmed that connection; the already
