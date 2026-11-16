@@ -268,8 +268,10 @@ cd build-release
 sha256sum -c SHA256SUMS
 ```
 
-This creates `SIDSynth-0.5.0-linux-x86_64.tar.gz` and
-`SIDSynth-0.5.0-source.tar.gz`. The binary archive includes the complete VST3,
+For the current version, this creates `SIDSynth-0.5.1-linux-x86_64.tar.gz` and
+`SIDSynth-0.5.1-source.tar.gz`. Rebuild the plugin after changing the project
+version; packaging rejects a module whose version differs from the source.
+The binary archive includes the complete VST3,
 licenses/notices, documentation and examples. The source archive includes this
 project and the two original verified dependency source archives, with
 `BUILD-OFFLINE.txt` explaining a network-free configure/build. System development

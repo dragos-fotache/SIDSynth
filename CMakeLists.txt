@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 cmake_minimum_required(VERSION 3.24)
-project(SIDSynth VERSION 0.5.0 LANGUAGES C CXX)
+project(SIDSynth VERSION 0.5.1 LANGUAGES C CXX)
 
 if(NOT CMAKE_SYSTEM_NAME STREQUAL "Linux")
     message(FATAL_ERROR "SIDSynth currently supports Linux only")

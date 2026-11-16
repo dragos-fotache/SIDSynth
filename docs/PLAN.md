@@ -12,6 +12,8 @@ were run or added for that correction, as requested.
 The subsequent noise-lock recovery fix is described in `docs/STATUS.md`;
 returning to Noise alone now reseeds a locked generator in isolation, retaining
 the existing parameter/state contract and combined-waveform behavior.
+The current source version is **0.5.1** for that patch; the 0.5.0 validation
+records and local archives remain historical checkpoints.
 
 ## Working agreement
 

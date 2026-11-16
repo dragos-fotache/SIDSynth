@@ -1,4 +1,22 @@
-# SIDSynth 0.5.0 — first Linux preview
+# SIDSynth release notes
+
+## 0.5.1 — noise recovery patch
+
+16 November 2026. Source version bumped for automatic recovery of a locked
+noise generator when returning to Noise alone with TEST off. Recovery preserves
+held notes, the other voices and shared filter. Combined noise waveforms retain
+their SID behavior, including possible silence. The patch also includes the
+numeric-entry colour correction introduced after the first preview checkpoint.
+Plugin identity, all 67 parameter IDs and schema 3 remain unchanged.
+
+The noise fix passed Release CTest and callback guards before this version bump;
+the user confirms recovery in their Renoise workflow. Numeric-entry validation
+remains pending. Exact evidence and limits are in [STATUS.md](STATUS.md).
+The version bump itself has source/diff checks only: no rebuild, installation,
+repackaging or new host check is claimed. Existing local 0.5.0 archives retain
+the earlier preview module. GitHub releases remain manually dispatched.
+
+## 0.5.0 — first Linux preview checkpoint
 
 16 November 2026. Linux x86_64, VST3, Renoise first. Local release archives
 include corresponding project/dependency sources; no public upload was made.
@@ -10,7 +28,7 @@ and two host fixes: hidden editors no longer request keyboard focus, and the
 host tail is 30 seconds so slow SID releases can continue beyond one second.
 Panic and transport stop retain their deliberate immediate reset behavior.
 
-## Verification
+### Verification
 
 All results below were automated by the agent unless stated otherwise.
 
@@ -36,7 +54,7 @@ from release performance measurements.
 The user confirmed Stage 2 listening and the Stage 4 Rack's appearance and
 behavior. New demo sound-quality approval is not separately recorded.
 
-## CPU measurement
+### CPU measurement
 
 The Release benchmark measures fresh idle, released notes, filtered 6581/8580 (all voices plus
 sync/ring), and stereo EXT IN at 44.1/48/96 kHz and blocks 64/257/1024.
@@ -52,7 +70,7 @@ This machine is an AMD Ryzen 5 3600X on Arch Linux. Measurements are local
 desktop samples. Other audio/UI work can affect scheduling; they establish
 neither hard real-time guarantees nor compatibility with older distributions.
 
-## Remaining host limits
+### Remaining host limits
 
 - Actual Renoise playback uses JACK/PipeWire at **48 kHz / 1024 frames**.
   The broader matrix and reconfiguration checks run in the real processor and
