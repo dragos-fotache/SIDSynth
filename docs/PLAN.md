@@ -9,6 +9,9 @@ buffers remain environment-limited acceptance checks; see docs/RELEASE.md and
 docs/STATUS.md. The user reports Stage 5 works fine. A subsequent numeric-entry
 colour correction is rebuilt/installed and left for user testing; no tests
 were run or added for that correction, as requested.
+The subsequent noise-lock recovery fix is described in `docs/STATUS.md`;
+returning to Noise alone now reseeds a locked generator in isolation, retaining
+the existing parameter/state contract and combined-waveform behavior.
 
 ## Working agreement
 

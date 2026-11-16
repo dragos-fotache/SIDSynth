@@ -522,6 +522,7 @@ void panicTests()
 #include "Stage3Tests.h"
 #include "Stage4Tests.h"
 #include "Stage5Tests.h"
+#include "NoiseRecoveryTests.h"
 #include "Benchmark.h"
 }
 
@@ -531,6 +532,7 @@ int main(int argc, char** argv)
     {
         juce::ScopedJuceInitialiser_GUI juce;
         if (argc > 1 && std::string(argv[1]) == "--benchmark") return benchmark();
+        noiseRecoveryTests();
         using juce::MidiMessage;
         std::vector<float> audition;
         for (const int rate : {44100, 48000, 96000})

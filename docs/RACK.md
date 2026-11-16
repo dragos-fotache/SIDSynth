@@ -11,6 +11,10 @@ IDs and schema 3 remain unchanged.
   top **Layered input** selector is active and the part selectors are disabled.
 - Waveform switches combine independently. Sync/ring labels identify the
   preceding oscillator; ring modulation acts on Triangle.
+  Combining **Noise** with another waveform retains the SID's hardware
+  interaction, including possible silence. Returning to **Noise alone**
+  automatically recovers a locked noise generator without releasing the note
+  or resetting the other voices or shared filter. TEST must be off to sound.
 - **MIDI** source uses MIDI notes, tuning and bend. Tuning is in semitones with
   0.01-semitone steps (one cent). **Manual** replaces tuning with the exact
   0–65535 frequency register and enables **Hold**. Frequency in Hz is the

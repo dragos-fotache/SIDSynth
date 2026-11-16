@@ -89,7 +89,24 @@ void SidBackend::configure(bool model8580, bool ntsc) noexcept
     }
 }
 void SidBackend::reset() noexcept { chip->input(0); chip->reset(); }
-void SidBackend::write(int address, unsigned char value) noexcept { chip->write(address, value); }
+void SidBackend::write(int address, unsigned char value) noexcept
+{
+    chip->write(address, value);
+    if ((address == 4 || address == 11 || address == 18) && (value & 0xf8) == 0x80)
+    {
+        auto* wave = chip->voice[address / 7].wave();
+        // Combined waveforms can drain the noise LFSR to its absorbing zero
+        // state. Noise alone must recover without resetting the other voices,
+        // accumulator phase, envelope or shared filter. Keep healthy noise and
+        // explicit TEST/combined-waveform behavior unchanged.
+        if (wave->shift_register == 0)
+        {
+            wave->shift_register = wave->shift_latch = 0x3fffff; // Upstream reset seed.
+            wave->test_or_reset = false;
+            wave->set_noise_output();
+        }
+    }
+}
 void SidBackend::input(int value) noexcept { chip->input(value); }
 void SidBackend::clock(short* output, int count) noexcept { if (count > 0) chip->clock(output, count); }
 }

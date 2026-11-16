@@ -65,6 +65,10 @@ calls from linked code in addition to ordinary C++ new/new[]. These guards are
 bounded linked-call checks, rather than a whole-process profiler. See the
 Stage 5 measurements in RELEASE.md.
 The cached model and clock configuration path is covered while notes are live.
+Noise-recovery regressions cover all three voices, MIDI/Manual ownership,
+filtered/bypassed output, both models, all three rates and exact callback-size
+consistency. They compare healthy noise, combined waveforms, explicit TEST
+and another voice's sync/ring/filter history against the pinned upstream core.
 
 `stage3-filter-sync-ring.wav` is an additional offline audition example. The
 retained three-part/layered files still use their historical `stage2-` names.

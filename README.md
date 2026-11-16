@@ -7,6 +7,9 @@ Stage 5 provides the first Linux preview release, **0.5.0**: the native Rack,
 67 stable parameters, schema-3 recall, hardened editor focus and a host tail
 long enough for the slow SID release. Validation, CPU measurements and remaining
 host limits are recorded in [the release notes](docs/RELEASE.md).
+The current source also automatically recovers a locked noise generator when
+returning to Noise alone; see [current status](docs/STATUS.md) for validation
+and installation details after the preview checkpoint.
 
 Three demo instruments and a one-instance/two-alias Renoise song are in
 [examples/](examples/README.md). Build, sanitizer, benchmark and packaging

@@ -95,6 +95,15 @@ TEST holds/resets the selected oscillator's accumulator/noise hardware; it is
 not a global chip reset or an extra digital mute. SID envelope rates/cutoff are
 register values, not promises of linear milliseconds or Hz across both models.
 
+SIDSynth makes one deliberate usability exception to persistent noise lock-up:
+when a control-register write selects Noise alone with TEST off, an all-zero
+noise shift register is reseeded with the pinned core's reset seed. Healthy
+noise and combined waveforms keep their existing behavior. Recovery changes
+only the target noise register/latch and derived noise output; it preserves
+oscillator phase, frequency, gate/envelope, MIDI/Manual ownership, other voices
+and the shared filter/resampler history. It adds no saved parameter or chip
+state and requires no Panic/reset or new note.
+
 ### Manual versus MIDI ownership
 
 In MIDI source, note + tuning + bend determines the rounded/saturated 16-bit

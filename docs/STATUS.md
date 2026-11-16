@@ -15,6 +15,8 @@ for this checkpoint; the numeric-entry correction awaits user validation.
 - Linux only; open-source plugin; initial format VST3; first host Renoise.
 - Selected interface: Rack. Its design files are unchanged by Stages 1 and 2.
 - Implement in stages with durable project context.
+- On 16 November the user explicitly requests a code fix for persistent Noise
+  silence after waveform switching; automatic recovery is implemented below.
 - User requested Stage 5 implementation on 16 November; preview release below.
 - User requested GitHub Actions Linux builds and a release workflow that they
   will run manually. Keep automated tests disabled in these workflows.
@@ -34,6 +36,111 @@ for this checkpoint; the numeric-entry correction awaits user validation.
   after playing Vital and switching back to SIDSynth in the Plugin tab.
 - User directs us to leave Renoise/Vital bugs alone and move on if the fault
   is external. The isolated tests below reproduce the crash with Vital alone.
+
+## Noise lock recovery — code fix installed, Renoise restart pending
+
+Returning to **Noise alone**, with TEST off, now automatically recovers an
+all-zero noise shift register. `SidBackend::write()` reseeds only that voice's
+noise register/latch and refreshes its derived noise output. It does not reset
+the chip, advance clock time, retrigger a gate/envelope, clear MIDI/Manual
+ownership, or disturb the other oscillators, shared filter or resampler.
+Healthy noise and the deliberate hardware interaction while multiple waveform
+bits are selected retain upstream behavior. TEST still holds the oscillator.
+
+The build-tree adapter now adds its checked friend declaration to
+`WaveformGenerator.h` as well as `SID.h`; the downloaded pinned sources and
+upstream emulation functions stay unchanged. Notices and the Rack/state guides
+document the wrapper's recovery policy. No UI/design, parameter IDs, saved
+schema, dependency pins or plugin identity changed.
+
+**Automated by the agent:** the new processor regression failed before the fix
+with `Noise alone remained latched silent after deselecting Saw` (0.27 s).
+After the fix, the final Release build succeeds and CTest passes **1/1
+(15.02 s)**. New coverage includes all three voices, MIDI and Manual Hold,
+recovery during a held note, filtered/bypassed audio, both chip models, all
+three sample rates and exact sample equality at blocks 64/257/1024. Reference
+comparisons against the pinned upstream core cover healthy audible noise,
+combined Noise+Triangle/Saw/Pulse/all bits, explicit TEST, and a sounding
+voice's sync/ring/envelope/shared-filter history while hidden Voice 3 recovers.
+All existing tests pass. Callback guards report **0 C++ allocations, 0 C
+allocator calls, 0 frees and 0 pthread mutex locks**, including the recovery.
+
+**Installed:** atomically replaced the local VST3 module and its metadata/
+notices at `/home/dragos/.vst3/SIDSynth.vst3`. Built/installed SHA-256:
+`69fd84df2fd6cac127f6b169c9543cecb1104507c874eaa627204e315dc5b000`.
+Previous module: `work/sidsynth-before-noise-recovery.so`. The running Renoise
+still has the previous binary mapped; it was not restarted or operated during
+this code fix. Save the current song and restart Renoise to load the fix.
+Actual Renoise validation and subjective listening of this new binary remain
+pending; the diagnosis below used the previous binary. No sanitizer/pluginval
+rerun, release packaging or upload is claimed for this patch. Archived 0.5.0
+packages still contain the earlier preview module.
+
+Exact final commands:
+
+```sh
+cmake --build build-clean --parallel 4
+ctest --test-dir build-clean --output-on-failure --output-log work/noise-recovery-ctest.log
+```
+
+Evidence: `work/noise-recovery-{before-build,before-ctest,build,ctest}.log`,
+`work/noise-recovery-install.json` and `tests/NoiseRecoveryTests.h`.
+Next: after restarting Renoise, hold Voice 1, enable Noise alongside Saw, then
+switch Saw off. Noise should resume immediately with the filter routed or
+bypassed, without Panic/reset or a new note.
+
+## Noise silence diagnosis — historical, before the code fix
+
+On 16 November the user reported only a low click from Voice 1 Noise, with or
+without filtering, while other waveforms played. Inspected the ready, open
+Renoise **PID 97304**, an unsaved Untitled song; did not load/replace a song or
+instrument. Initial settings were 8580/PAL, 3 parts, Voice 1 on channel 1 with
+Noise alone, TEST off, ADSR 0/15/15/0, LP on, cutoff 280 and Voice 1 routed to
+the filter. Voices 2/3 had no waveform selected.
+
+**Actual Renoise, automated by the agent:** recorded short MIDI notes from
+only this PID's output. Before reset, held RMS was **0.000253 filtered /
+0.000351 bypassed**. A temporary play-mode edge invoked the same
+`clearPerformance()` / `engine.panic()` path as Panic, then restored 3 parts.
+Held RMS recovered to **0.028383 filtered / 0.031696 bypassed**, with the same
+patch. All 67 host parameter values matched the initial snapshot afterward.
+This is measured playback recovery; no subjective listening confirmation is
+claimed. No production code, binary, dependency, parameter ID or schema changed.
+
+**Separate engine reproduction, automated by the agent:** a one-off probe
+linked the existing Release engine/core libraries. Noise alone played on both
+models; one second of Noise+Saw followed by Noise alone latched its output near
+silence. Filter routing did not recover it; `panic()` did. For 8580, bypassed
+RMS changed **0.063956 → 0.0000153 → 0.063437** after reset; 6581 reproduced
+the same behavior. The pinned core intentionally writes combined-waveform
+output back into its noise shift register. Thus a brief waveform overlap is a
+reproduced explanation for the user's symptom, although their earlier click
+sequence was not observed. The subsequent code fix above preserves combined
+waveforms and automatically recovers when Noise alone is selected.
+
+The native host-check tool restricts writes to scratch songs. This diagnostic
+used a temporary API helper scoped to the current PID/SIDSynth and only test
+notes, filter routing and play mode; it was unregistered and its installed file
+removed afterward. Early X11 input attempts failed to reach the second-screen
+editor; its original position was restored. An early helper API error
+interrupted monitor-link cleanup. Renoise's stereo output was explicitly
+reconnected to the configured **USB AUDIO CODEC** sink and both links verified.
+The final session is stopped, Rack open, notes released, Noise alone and the
+initial filter/patch values restored. No full test suite or rebuild was run.
+
+Evidence in ignored `work/renoise-host/`: `noise-before.png`,
+`noise-before-inspect.json`, `noise-live-probe.wav`, `noise-live-probe.json`,
+and `noise-latch-probe.{cpp,txt}`. The one-off engine check can be repeated with:
+
+```sh
+c++ -std=c++17 -O2 -Isrc work/renoise-host/noise-latch-probe.cpp \
+  build-clean/libsid_engine.a build-clean/liblibresidfp.a -pthread \
+  -o work/renoise-host/noise-latch-probe
+work/renoise-host/noise-latch-probe
+```
+
+At this diagnosis checkpoint, recovery required Noise alone plus Panic/reset.
+The subsequent code fix removes that requirement after loading the new binary.
 
 ## GitHub Actions setup
 
@@ -750,6 +857,10 @@ services). The actual Renoise load/play result remains user-confirmed.
 
 ## Known limits and findings
 
+- Combined noise retains its hardware behavior, including possible silence.
+  The current code automatically reseeds a locked generator when Noise alone
+  is selected with TEST off. The installed fix requires a Renoise restart;
+  the prior running binary still needs Panic/reset to recover.
 - Hardware parameters step at callback boundaries; only MIDI retains within-
   block offsets. Velocity remains fixed-level, bend is ±2 semitones (RPN
   ignored). Stage 4 appearance/behavior and Stage 2 listening/display are
@@ -777,6 +888,10 @@ services). The actual Renoise load/play result remains user-confirmed.
 
 ## Next concrete task
 
+Save the current Renoise song and restart to load the installed noise fix.
+Audition switching from Noise+Saw to Noise alone while a note is held, with
+filter routing on and off; the new binary has automated validation, while
+actual host/listening confirmation is pending.
 Manually check numeric entry after loading the colour correction. The
 available Stage 5 implementation/checks and local preview packaging are complete.
 Remaining acceptance checks need a licensed Renoise renderer and additional
@@ -789,8 +904,14 @@ features require user direction. Keep external Vital investigation out of scope.
 > Stage 5 preview 0.5.0 is built/installed and packaged with pinned dependency
 > sources, stable 67 IDs and schema 3. Release tests, ASan/UBSan/leak detection,
 > level-10 pluginval and actual Renoise alias/automation/multiple-instance/recall/
-> stop/start/editor checks pass. The dedicated scratch PID 81061 is stopped on
-> the final audition song with its Rack open and monitors restored. Verify the
+> stop/start/editor checks pass. A later noise-silence diagnosis recovered the
+> user's current Untitled session, PID 97304, using a chip reset with all patch
+> values restored. A subsequent code fix now reseeds a locked noise generator
+> when Noise alone is selected, preserving the shared chip and held notes.
+> Release CTest passes including the new regressions; the new module is
+> atomically installed. Restart Renoise to load it; its actual host/listening
+> check is pending. PID 81061 and the
+> Stage 5 audition song above are historical, not the current host. Verify the
 > ready main window before MCP; never inspect during startup/recovery. Do not
 > replace instrument 00 when testing native XRNI recall: Renoise drops its
 > aliases; use empty slot 03. Licensed-host offline render, other rates/buffers

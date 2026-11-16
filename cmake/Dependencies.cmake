@@ -21,20 +21,26 @@ FetchContent_MakeAvailable(libresidfp)
 
 # Upstream 1.3.0 uses autotools. Mirror its Makefile.am source list and
 # configure.ac release configuration. Keep the downloaded source immutable.
-# One explicit friend declaration in a build-tree copy lets our adapter cache
-# model tables/resamplers outside the callback (upstream setters allocate/lock).
+# Explicit friend declarations in build-tree headers let the adapter cache
+# model tables/resamplers and recover a locked noise generator in isolation.
 set(residfp_rt_src "${libresidfp_BINARY_DIR}/realtime-src")
-file(COPY "${libresidfp_SOURCE_DIR}/src/" DESTINATION "${residfp_rt_src}" PATTERN "SID.h" EXCLUDE)
-file(READ "${libresidfp_SOURCE_DIR}/src/SID.h" sid_header)
-set(sid_anchor "    friend class State;")
-string(FIND "${sid_header}" "${sid_anchor}" sid_anchor_position)
-if(sid_anchor_position EQUAL -1)
-    message(FATAL_ERROR "Pinned SID.h adapter anchor changed")
-endif()
-string(REPLACE "#define SIDFP_H" "#define SIDFP_H\n\nnamespace sidsynth { class SidBackend; }" sid_header "${sid_header}")
-string(REPLACE "${sid_anchor}" "${sid_anchor}\n    friend class sidsynth::SidBackend;" sid_header "${sid_header}")
-file(WRITE "${libresidfp_BINARY_DIR}/SID-realtime.h.in" "${sid_header}")
-configure_file("${libresidfp_BINARY_DIR}/SID-realtime.h.in" "${residfp_rt_src}/SID.h" COPYONLY)
+file(COPY "${libresidfp_SOURCE_DIR}/src/" DESTINATION "${residfp_rt_src}"
+    PATTERN "SID.h" EXCLUDE PATTERN "WaveformGenerator.h" EXCLUDE)
+function(sidsynth_adapter_header name guard)
+    file(READ "${libresidfp_SOURCE_DIR}/src/${name}.h" header)
+    set(anchor "    friend class State;")
+    string(FIND "${header}" "${anchor}" anchor_position)
+    string(FIND "${header}" "#define ${guard}" guard_position)
+    if(anchor_position EQUAL -1 OR guard_position EQUAL -1)
+        message(FATAL_ERROR "Pinned ${name}.h adapter anchor changed")
+    endif()
+    string(REPLACE "#define ${guard}" "#define ${guard}\n\nnamespace sidsynth { class SidBackend; }" header "${header}")
+    string(REPLACE "${anchor}" "${anchor}\n    friend class sidsynth::SidBackend;" header "${header}")
+    file(WRITE "${libresidfp_BINARY_DIR}/${name}-realtime.h.in" "${header}")
+    configure_file("${libresidfp_BINARY_DIR}/${name}-realtime.h.in" "${residfp_rt_src}/${name}.h" COPYONLY)
+endfunction()
+sidsynth_adapter_header(SID SIDFP_H)
+sidsynth_adapter_header(WaveformGenerator WAVEFORMGENERATOR_H)
 set(RESIDFP_BRANCH_HINTS 1)
 set(HAVE_BUILTIN_EXPECT 1)
 set(RESIDFP_INLINING 1)

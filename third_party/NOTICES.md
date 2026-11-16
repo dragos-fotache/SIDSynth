@@ -49,14 +49,19 @@ is included.
 `cmake/Dependencies.cmake` pins archive SHA-256 digests as well as source commits.
 Its CMake adapter uses the libresidfp source list from the pinned `Makefile.am`
 and configures its two generated headers with release settings. Stage 3 builds
-from a separate source copy beneath the build tree and adds only a forward
-`SidBackend` declaration and friend declaration to `SID.h`. The downloaded
-pinned source stays immutable. `src/SidBackend.cpp` caches both models' existing
+from a separate source copy beneath the build tree and adds forward
+`SidBackend` declarations and friend declarations to `SID.h` and
+`WaveformGenerator.h`. The downloaded pinned source stays immutable.
+`src/SidBackend.cpp` caches both models' existing
 DAC/waveform tables and PAL/NTSC resamplers during construction/preparation,
 then copies/swaps these configurations during playback without the allocation
-and mutex in upstream's public setters. Exactly one SID core remains. No DSP
-algorithm or upstream license notice is removed or changed. The adapter is
-tightly coupled to this pinned version and the configure step checks its patch
+and mutex in upstream's public setters. It also reseeds an all-zero noise
+shift register when Noise alone is selected with TEST off, preventing a prior
+combined waveform from leaving Noise permanently silent. This wrapper policy
+preserves the oscillator accumulator, envelope, other voices and shared filter;
+combined waveforms and healthy noise retain upstream behavior. Exactly one SID
+core remains. Upstream emulation functions and license notices remain intact.
+The adapter is tightly coupled to this pinned version and the configure step checks its patch
 anchor; changes to upstream private fields require adapter review.
 It does not use a system-installed, potentially different libresidfp.
 
